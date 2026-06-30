@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Spreadtrum/Unisoc (SPD) Service"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <Button
+        android:id="@+id/btnSpdDetect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Detect FDL Device"
+        android:layout_marginBottom="8dp" />
+
+    <Button
+        android:id="@+id/btnSpdReadPartitions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Read Partitions"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Service Operations:"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp" />
+
+    <Button
+        android:id="@+id/btnSpdRemoveFrp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Remove FRP"
+        android:textColor="#FF5722"
+        android:layout_marginBottom="4dp" />
+
+    <Button
+        android:id="@+id/btnSpdFactoryReset"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Factory Reset"
+        android:textColor="#F44336"
+        android:layout_marginBottom="4dp" />
+
+    <Button
+        android:id="@+id/btnSpdRemoveLock"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Remove Screen Lock"
+        android:textColor="#FF9800"
+        android:layout_marginBottom="4dp" />
+
+    <Button
+        android:id="@+id/btnSpdUnlockBootloader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Unlock Bootloader"
+        android:textColor="#E91E63"
+        android:layout_marginBottom="4dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Flash Operations:"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp" />
+
+    <Button
+        android:id="@+id/btnSpdReadFlash"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Read Flash"
+        android:layout_marginBottom="4dp" />
+
+    <Button
+        android:id="@+id/btnSpdWriteFlash"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Write Flash"
+        android:layout_marginBottom="4dp" />
+
+    <Button
+        android:id="@+id/btnSpdEraseFlash"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Erase Flash"
+        android:layout_marginBottom="4dp" />
+
+    <ProgressBar
+        android:id="@+id/progressSpd"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="100"
+        android:visibility="gone"
+        android:layout_marginTop="8dp" />
+
+</LinearLayout>

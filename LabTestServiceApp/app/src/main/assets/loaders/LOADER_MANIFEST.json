@@ -1,0 +1,63 @@
+{
+  "version": "1.0.0",
+  "description": "Qualcomm Firehose loader manifest - auto-generated from Loaders submodule",
+  "loaders": [
+    {
+      "hwid": "0x000B",
+      "chip_name": "MSM8660",
+      "chip_code": "8660",
+      "file_name": "qualcomm/prog_firehose_8660.elf",
+      "description": "Generic Qualcomm loader"
+    },
+    {
+      "hwid": "0x0046",
+      "chip_name": "MSM8937",
+      "chip_code": "8937",
+      "file_name": "qualcomm/prog_firehose_8937.elf",
+      "description": "Snapdragon 430 loader"
+    },
+    {
+      "hwid": "0x0067",
+      "chip_name": "SDM845",
+      "chip_code": "845",
+      "file_name": "qualcomm/prog_firehose_845.elf",
+      "description": "Snapdragon 845 loader"
+    },
+    {
+      "hwid": "0x006E",
+      "chip_name": "SM8150",
+      "chip_code": "8150",
+      "file_name": "qualcomm/prog_firehose_8150.elf",
+      "description": "Snapdragon 855 loader"
+    },
+    {
+      "hwid": "0x0083",
+      "chip_name": "SM8250",
+      "chip_code": "8250",
+      "file_name": "qualcomm/prog_firehose_8250.elf",
+      "description": "Snapdragon 865 loader"
+    },
+    {
+      "hwid": "0x00B6",
+      "chip_name": "SM8350",
+      "chip_code": "8350",
+      "file_name": "qualcomm/prog_firehose_8350.elf",
+      "description": "Snapdragon 888 loader"
+    }
+  ],
+  "vendor_folders": {
+    "xiaomi": "xiaomi/",
+    "oneplus": "oneplus/",
+    "oppo": "oppo/",
+    "vivo": "vivo/",
+    "realme": "oppo/",
+    "samsung": "samsung/",
+    "huawei": "huawei/",
+    "motorola": "lenovo_motorola/",
+    "lg": "LG/",
+    "nokia": "nokia_foxconn/",
+    "sony": "sony/",
+    "google": "qualcomm/"
+  },
+  "notes": "For complete loader list, copy files from repo_clones/edl/Loaders/ to assets/loaders/qualcomm/"
+}

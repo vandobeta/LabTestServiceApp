@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.labtest.serviceapp">
+
+    <uses-feature android:name="android.hardware.usb.host" />
+    <uses-permission android:name="android.hardware.usb.permission.USB" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="LabTest Service"
+        android:supportsRtl="true"
+        android:theme="@android:style/Theme.Material.Light">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="LabTest Service"
+            android:theme="@android:style/Theme.Material.Light">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.mtk.MtkActivity"
+            android:exported="false"
+            android:label="MTK Service"
+            android:parentActivityName=".MainActivity" />
+
+        <activity
+            android:name=".ui.qualcomm.QualcommActivity"
+            android:exported="false"
+            android:label="Qualcomm Service"
+            android:parentActivityName=".MainActivity" />
+
+        <activity
+            android:name=".ui.spd.SpreadtrumActivity"
+            android:exported="false"
+            android:label="Spreadtrum Service"
+            android:parentActivityName=".MainActivity" />
+
+        <service
+            android:name=".service.LabTestForegroundService"
+            android:exported="false"
+            android:foregroundServiceType="connectedDevice" />
+
+        <receiver
+            android:name=".BootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+    </application>
+
+</manifest>

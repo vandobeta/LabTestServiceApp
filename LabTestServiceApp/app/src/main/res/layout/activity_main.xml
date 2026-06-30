@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <TextView
+        android:id="@+id/statusText"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text="Press Detect Devices to scan for connected devices in boot modes."
+        android:background="#F0F0F0"
+        android:padding="12dp"
+        android:scrollbars="vertical"
+        android:textIsSelectable="true" />
+
+    <Button
+        android:id="@+id/detectButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Detect Devices"
+        android:layout_marginTop="8dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnMtk"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="MTK" />
+
+        <Button
+            android:id="@+id/btnQc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Qualcomm" />
+
+        <Button
+            android:id="@+id/btnSpd"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Spreadtrum" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnImportLoader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Import Loader"
+        android:layout_marginTop="8dp" />
+
+    <Button
+        android:id="@+id/btnKeepAlive"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Enable Keep Alive"
+        android:layout_marginBottom="8dp" />
+
+</LinearLayout>
