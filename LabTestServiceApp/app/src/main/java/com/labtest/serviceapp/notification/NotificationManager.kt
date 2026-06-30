@@ -37,16 +37,19 @@ object NotificationManager {
     }
 
     private fun getManager(): NotificationManager {
-        return ctx!!.getSystemService(NotificationManager::class.java)
+        val context = ctx ?: throw IllegalStateException("NotificationManager not initialized. Call init() first.")
+        return context.getSystemService(NotificationManager::class.java)
     }
 
     private fun getPendingIntent(): PendingIntent {
-        return PendingIntent.getActivity(ctx!!, 0, Intent(ctx!!, MainActivity::class.java),
+        val context = ctx ?: throw IllegalStateException("NotificationManager not initialized. Call init() first.")
+        return PendingIntent.getActivity(context, 0, Intent(context, MainActivity::class.java),
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
     fun showProgress(id: Int, title: String, message: String, progress: Int, max: Int = 100) {
-        val notification = NotificationCompat.Builder(ctx!!, CHANNEL_PROGRESS)
+        val context = ctx ?: return
+        val notification = NotificationCompat.Builder(context, CHANNEL_PROGRESS)
             .setContentTitle(title).setContentText(message)
             .setSmallIcon(android.R.drawable.ic_menu_save)
             .setContentIntent(getPendingIntent())
@@ -56,7 +59,8 @@ object NotificationManager {
     }
 
     fun showComplete(id: Int, title: String, message: String) {
-        val notification = NotificationCompat.Builder(ctx!!, CHANNEL_COMPLETE)
+        val context = ctx ?: return
+        val notification = NotificationCompat.Builder(context, CHANNEL_COMPLETE)
             .setContentTitle(title).setContentText(message)
             .setSmallIcon(android.R.drawable.ic_menu_view)
             .setContentIntent(getPendingIntent())
@@ -65,7 +69,8 @@ object NotificationManager {
     }
 
     fun showError(id: Int, title: String, message: String) {
-        val notification = NotificationCompat.Builder(ctx!!, CHANNEL_ERROR)
+        val context = ctx ?: return
+        val notification = NotificationCompat.Builder(context, CHANNEL_ERROR)
             .setContentTitle(title).setContentText(message)
             .setSmallIcon(android.R.drawable.ic_dialog_alert)
             .setContentIntent(getPendingIntent())
@@ -74,6 +79,7 @@ object NotificationManager {
     }
 
     fun clearProgress(id: Int) {
+        if (ctx == null) return
         getManager().cancel(id)
     }
 

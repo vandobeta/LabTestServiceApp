@@ -92,7 +92,7 @@ object UsbPermissionManager {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             ContextCompat.checkSelfPermission(
                 activity,
-                Manifest.permission.USB_PERMISSION
+                "android.permission.USB"
             ) == PackageManager.PERMISSION_GRANTED
         } else {
             true
@@ -106,7 +106,7 @@ object UsbPermissionManager {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             ActivityCompat.requestPermissions(
                 activity,
-                arrayOf(Manifest.permission.USB_PERMISSION),
+                arrayOf("android.permission.USB"),
                 requestCode
             )
         }

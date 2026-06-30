@@ -6,6 +6,7 @@ import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbInterface
 import android.hardware.usb.UsbEndpoint
 import android.hardware.usb.UsbDeviceConnection
+import android.hardware.usb.UsbConstants
 import com.labtest.serviceapp.protocols.mtk.MtkProtocol
 import com.labtest.serviceapp.protocols.qualcomm.QualcommProtocol
 import com.labtest.serviceapp.protocols.spd.SpreadtrumProtocol
@@ -130,16 +131,17 @@ class UsbDeviceManager(private val context: Context) {
      */
     fun findBulkEndpoints(device: UsbDevice): BulkEndpoints? {
         for (i in 0 until device.interfaceCount) {
-            iface = device.getInterface(i)
-            if (iface?.interfaceClass == UsbConstants.USB_CLASS_VENDOR_SPECIFIC ||
-                iface?.interfaceClass == UsbConstants.USB_CLASS_PER_INTERFACE
+            val iface = device.getInterface(i)
+            if (iface?.interfaceClass == 0xFF ||
+                iface?.interfaceClass == 0x00
             ) {
                 var inEndpoint: UsbEndpoint? = null
                 var outEndpoint: UsbEndpoint? = null
                 
                 for (j in 0 until iface.endpointCount) {
                     val ep = iface.getEndpoint(j)
-                    when (ep?.direction) {
+                    val direction = ep?.direction?.toInt()
+                    when (direction) {
                         UsbConstants.USB_DIR_IN -> inEndpoint = ep
                         UsbConstants.USB_DIR_OUT -> outEndpoint = ep
                     }

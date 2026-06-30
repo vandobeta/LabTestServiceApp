@@ -1,0 +1,22 @@
+# Built application
+*.ap_
+*.apk
+
+# Gradle
+.gradle/
+build/
+app/build/
+gradle/
+gradlew
+gradlew.bat
+
+# Android SDK
+local.properties
+
+# IDE
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db

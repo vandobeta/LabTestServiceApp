@@ -14,12 +14,12 @@ object SpreadtrumProtocol {
 
     object Constants {
         // FDL stage hellos
-        val FDL1_HELLO = byteArrayOf(0x80.toByte(), 0x00, 0x00, 0x00)
-        val FDL2_HELLO = byteArrayOf(0x81.toByte(), 0x00, 0x00, 0x00)
+        val FDL1_HELLO = byteArrayOf(0x80.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00.toByte())
+        val FDL2_HELLO = byteArrayOf(0x81.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00.toByte())
         
         // Acknowledgments
-        val ACK_OK = byteArrayOf(0x00, 0x00, 0x00, 0x00)
-        val ACK_ERROR = byteArrayOf(0xFF.toByte(), 0xFF, 0xFF, 0xFF)
+        val ACK_OK = byteArrayOf(0x00.toByte(), 0x00.toByte(), 0x00.toByte(), 0x00.toByte())
+        val ACK_ERROR = byteArrayOf(0xFF.toByte(), 0xFF.toByte(), 0xFF.toByte(), 0xFF.toByte())
         
         // Timeouts
         const val FDL_TIMEOUT_MS = 3000L
@@ -47,11 +47,11 @@ object SpreadtrumProtocol {
         const val BSL_CMD_KEEP_CHARGE = 0x0C
         
         // Legacy FDL commands
-        const val CMD_READ_FLASH = 0x80000003
-        const val CMD_WRITE_FLASH = 0x80000004
-        const val CMD_ERASE_FLASH = 0x80000005
-        const val CMD_VERITY = 0x80000006
-        const val CMD_GETChip_INFO = 0x80000007
+        const val CMD_READ_FLASH = -2147483645  // 0x80000003 as signed Int
+        const val CMD_WRITE_FLASH = -2147483644  // 0x80000004 as signed Int
+        const val CMD_ERASE_FLASH = -2147483643  // 0x80000005 as signed Int
+        const val CMD_VERITY = -2147483642  // 0x80000006 as signed Int
+        const val CMD_GETChip_INFO = -2147483641  // 0x80000007 as signed Int
         
         // Response codes
         const val RESP_SUCCESS = 0x00
@@ -75,7 +75,7 @@ object SpreadtrumProtocol {
      */
     suspend fun fdl1Handshake(port: UsbSerialPort): Result<Unit> {
         return try {
-            port.write(Constants.FDL1_HELLO, 0, Constants.FDL1_HELLO.size)
+            port.write(Constants.FDL1_HELLO, Constants.FDL1_HELLO.size)
             Thread.sleep(200)
             
             val response = ByteArray(64)
@@ -97,7 +97,7 @@ object SpreadtrumProtocol {
      */
     suspend fun fdl2Handshake(port: UsbSerialPort): Result<Unit> {
         return try {
-            port.write(Constants.FDL2_HELLO, 0, Constants.FDL2_HELLO.size)
+            port.write(Constants.FDL2_HELLO, Constants.FDL2_HELLO.size)
             Thread.sleep(200)
             
             val response = ByteArray(64)
@@ -133,15 +133,15 @@ object SpreadtrumProtocol {
                 val header = ByteBuffer.allocate(16).apply {
                     order(ByteOrder.LITTLE_ENDIAN)
                     putInt(Constants.CMD_WRITE_FLASH)
-                    putLong(baseAddress + offset)
+                    putLong(baseAddress + offset.toLong())
                     putInt(pageSize)
                 }
                 
-                port.write(header.array(), 0, 16)
+                port.write(header.array(), 16)
                 Thread.sleep(50)
                 
                 // Send page data
-                port.write(fdlData, offset, pageSize)
+                port.write(fdlData.copyOfRange(offset, offset + pageSize), pageSize)
                 offset += pageSize
                 Thread.sleep(50)
                 
@@ -174,14 +174,14 @@ object SpreadtrumProtocol {
                 putInt(size)
             }
             
-            port.write(cmd.array(), 0, 20)
+            port.write(cmd.array(), 20)
             Thread.sleep(200)
             
             val data = ByteArray(size)
             var offset = 0
             while (offset < size) {
                 val chunk = minOf(Constants.FDL_PACKET_SIZE, size - offset)
-                val read = port.read(data, offset, chunk, Constants.FDL_LONG_TIMEOUT_MS.toInt())
+                val read = port.read(data.copyOfRange(offset, offset + chunk), Constants.FDL_LONG_TIMEOUT_MS.toInt())
                 offset += read
             }
             
@@ -209,14 +209,14 @@ object SpreadtrumProtocol {
                 val cmd = ByteBuffer.allocate(20).apply {
                     order(ByteOrder.LITTLE_ENDIAN)
                     putInt(Constants.CMD_WRITE_FLASH)
-                    putLong(address + offset)
+                    putLong(address + offset.toLong())
                     putInt(pageSize)
                 }
                 
-                port.write(cmd.array(), 0, 20)
+                port.write(cmd.array(), 20)
                 Thread.sleep(50)
                 
-                port.write(data, offset, pageSize)
+                port.write(data.copyOfRange(offset, offset + pageSize), pageSize)
                 offset += pageSize
                 Thread.sleep(100)
             }
@@ -245,7 +245,7 @@ object SpreadtrumProtocol {
                 putLong(size)
             }
             
-            port.write(cmd.array(), 0, 20)
+            port.write(cmd.array(), 20)
             Thread.sleep(500) // Erase takes time
             
             val response = ByteArray(4)
@@ -272,7 +272,7 @@ object SpreadtrumProtocol {
                 putInt(0)
             }
             
-            port.write(cmd.array(), 0, 8)
+            port.write(cmd.array(), 8)
             Thread.sleep(100)
             
             val response = ByteArray(64)
@@ -316,7 +316,7 @@ object SpreadtrumProtocol {
                 putInt(0)
             }
             
-            port.write(cmd.array(), 0, 12)
+            port.write(cmd.array(), 12)
             Thread.sleep(200)
             
             val response = ByteArray(4)
@@ -492,7 +492,7 @@ object SpreadtrumProtocol {
                 putInt(size)
                 data?.let { put(it) }
             }
-            port.write(buffer.array(), 0, buffer.remaining())
+            port.write(buffer.array(), buffer.remaining())
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
@@ -610,7 +610,7 @@ object SpreadtrumProtocol {
         // In production, parse the full GPT table
         var offset = 0
         while (offset < partitionData.size - 64) {
-            val entryName = String(partitionData.sliceArray(offset until offset + 32)).trimEnd('\u0000'.code.toByte())
+            val entryName = String(partitionData.sliceArray(offset until offset + 32)).trimEnd('\u0000')
             if (entryName.equals(name, ignoreCase = true)) {
                 return ByteBuffer.wrap(partitionData.sliceArray(offset + 32 until offset + 40))
                     .order(ByteOrder.LITTLE_ENDIAN).long

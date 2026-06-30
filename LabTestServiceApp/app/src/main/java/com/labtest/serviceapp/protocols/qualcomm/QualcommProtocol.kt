@@ -53,7 +53,7 @@ object QualcommProtocol {
     suspend fun saharaHandshake(port: UsbSerialPort): Result<SaharaDeviceInfo> {
         return try {
             // Send hello
-            port.write(Constants.SAHARA_HELLO, 0, Constants.SAHARA_HELLO.size)
+            port.write(Constants.SAHARA_HELLO, Constants.SAHARA_HELLO.size)
             Thread.sleep(100)
             
             val response = ByteArray(256)
@@ -99,7 +99,7 @@ object QualcommProtocol {
             
             while (offset < loaderData.size) {
                 val size = minOf(chunkSize, loaderData.size - offset)
-                port.write(loaderData, offset, size)
+                port.write(loaderData.copyOfRange(offset, offset + size), size)
                 offset += size
                 Thread.sleep(50)
             }
@@ -107,7 +107,7 @@ object QualcommProtocol {
             Thread.sleep(500)
             
             // Send done command
-            port.write(Constants.SAHARA_DONE, 0, Constants.SAHARA_DONE.size)
+            port.write(Constants.SAHARA_DONE, Constants.SAHARA_DONE.size)
             Thread.sleep(1000)
             
             Result.success(Unit)
@@ -127,7 +127,7 @@ object QualcommProtocol {
             val xml = command.toXml()
             val packet = buildFirehosePacket(xml)
             
-            port.write(packet, 0, packet.size)
+            port.write(packet, packet.size)
             Thread.sleep(100)
             
             val response = ByteArray(64 * 1024) // 64KB buffer
@@ -165,7 +165,7 @@ object QualcommProtocol {
      */
     private fun parseFirehoseResponse(data: ByteArray): FirehoseResponse {
         // Simple XML parsing - in production use proper XML parser
-        val responseStr = String(data).trimEnd('\u0000'.code.toByte())
+        val responseStr = String(data).trimEnd('\u0000')
         
         val status = if (responseStr.contains("<error>")) {
             FirehoseStatus.ERROR

@@ -55,7 +55,7 @@ object MtkProtocol {
      */
     suspend fun bromHandshake(port: UsbSerialPort): Result<Unit> {
         return try {
-            port.write(Constants.BROM_HANDSHAKE_1, 0, 1)
+            port.write(Constants.BROM_HANDSHAKE_1, 1)
             Thread.sleep(100)
             
             val buffer = ByteArray(512)
@@ -80,7 +80,7 @@ object MtkProtocol {
         daAddress: Long
     ): Result<Unit> {
         return try {
-            port.write(Constants.STAGE2_HELLO, 0, 1)
+            port.write(Constants.STAGE2_HELLO, 1)
             Thread.sleep(100)
             
             val packet = ByteBuffer.allocate(16).apply {
@@ -90,13 +90,13 @@ object MtkProtocol {
                 putInt(0)
             }
             
-            port.write(packet.array(), 0, packet.remaining())
+            port.write(packet.array(), packet.remaining())
             Thread.sleep(200)
             
             var offset = 0
             while (offset < daData.size) {
                 val chunkSize = minOf(Constants.DA_PACKET_SIZE, daData.size - offset)
-                port.write(daData, offset, chunkSize)
+                port.write(daData.copyOfRange(offset, offset + chunkSize), chunkSize)
                 offset += chunkSize
                 Thread.sleep(50)
             }
@@ -124,7 +124,7 @@ object MtkProtocol {
                 putLong(address)
                 putInt(dwords)
             }
-            port.write(cmd.array(), 0, 12)
+            port.write(cmd.array(), 12)
             Thread.sleep(100)
             
             val response = ByteArray(dwords * 4)
@@ -156,7 +156,7 @@ object MtkProtocol {
                 putLong(address)
                 data.forEach { putInt(it) }
             }
-            port.write(cmd.array(), 0, cmd.remaining())
+            port.write(cmd.array(), cmd.remaining())
             Thread.sleep(100)
             
             Result.success(Unit)
@@ -177,7 +177,7 @@ object MtkProtocol {
                 putLong(address)
                 putInt(0)
             }
-            port.write(cmd.array(), 0, 12)
+            port.write(cmd.array(), 12)
             Thread.sleep(200)
             
             Result.success(Unit)
@@ -212,14 +212,14 @@ object MtkProtocol {
                 putLong(start)
                 putInt(length)
             }
-            port.write(cmd.array(), 0, 20)
+            port.write(cmd.array(), 20)
             Thread.sleep(200)
             
             val data = ByteArray(length)
             var offset = 0
             while (offset < length) {
                 val chunk = minOf(Constants.DA_PACKET_SIZE, length - offset)
-                val read = port.read(data, offset, chunk, Constants.STAGE2_TIMEOUT_MS.toInt())
+                val read = port.read(data.copyOfRange(offset, offset + chunk), Constants.STAGE2_TIMEOUT_MS.toInt())
                 offset += read
             }
             
@@ -254,10 +254,10 @@ object MtkProtocol {
                     putInt(chunkSize)
                 }
                 
-                port.write(cmd.array(), 0, 20)
+                port.write(cmd.array(), 20)
                 Thread.sleep(50)
                 
-                port.write(data, offset, chunkSize)
+                port.write(data.copyOfRange(offset, offset + chunkSize), chunkSize)
                 offset += chunkSize
                 Thread.sleep(50)
             }
@@ -288,7 +288,7 @@ object MtkProtocol {
                 putLong(start)
                 putInt(length)
             }
-            port.write(cmd.array(), 0, 20)
+            port.write(cmd.array(), 20)
             Thread.sleep(500) // Erase takes time
             
             Result.success(Unit)
@@ -311,7 +311,7 @@ object MtkProtocol {
                 putInt(0x30) // GET_PARTITION
                 putInt(0)
             }
-            port.write(cmd.array(), 0, 8)
+            port.write(cmd.array(), 8)
             Thread.sleep(100)
             
             val response = ByteArray(4096)
@@ -335,7 +335,7 @@ object MtkProtocol {
         while (buffer.hasRemaining()) {
             val name = ByteArray(32)
             buffer.get(name)
-            val nameStr = String(name).trimEnd('\u0000'.code.toByte())
+            val nameStr = String(name).trimEnd('\u0000')
             if (nameStr.isEmpty()) break
             
             val address = buffer.long
@@ -361,7 +361,7 @@ object MtkProtocol {
                 putInt(0x20) // RESET command
                 putInt(0)
             }
-            port.write(resetCmd.array(), 0, 8)
+            port.write(resetCmd.array(), 8)
             Thread.sleep(500)
             Result.success(Unit)
         } catch (e: Exception) {
@@ -379,7 +379,7 @@ object MtkProtocol {
                 putInt(0x21) // REBOOT command
                 putInt(0)
             }
-            port.write(cmd.array(), 0, 8)
+            port.write(cmd.array(), 8)
             Thread.sleep(500)
             Result.success(Unit)
         } catch (e: Exception) {
@@ -397,7 +397,7 @@ object MtkProtocol {
                 putInt(0x22) // POWER_OFF command
                 putInt(0)
             }
-            port.write(cmd.array(), 0, 8)
+            port.write(cmd.array(), 8)
             Thread.sleep(200)
             Result.success(Unit)
         } catch (e: Exception) {
@@ -466,7 +466,7 @@ object MtkProtocol {
                 putInt(0x40) // CLEAR_LOCK command
                 putInt(0)
             }
-            port.write(cmd.array(), 0, 8)
+            port.write(cmd.array(), 8)
             Thread.sleep(200)
             
             Result.success(Unit)
@@ -487,7 +487,7 @@ object MtkProtocol {
                 putInt(0x1) // Unlock flag
                 putInt(0)
             }
-            port.write(cmd.array(), 0, 12)
+            port.write(cmd.array(), 12)
             Thread.sleep(200)
             
             // Flash unlock token (needs DA with auth)
@@ -508,7 +508,7 @@ object MtkProtocol {
                 putInt(0x0) // Lock flag
                 putInt(0)
             }
-            port.write(cmd.array(), 0, 12)
+            port.write(cmd.array(), 12)
             Thread.sleep(200)
             
             Result.success(Unit)
@@ -540,14 +540,14 @@ object MtkProtocol {
                 putLong(start)
                 putInt(length)
             }
-            port.write(cmd.array(), 0, 16)
+            port.write(cmd.array(), 16)
             Thread.sleep(200)
             
             val data = ByteArray(length)
             var offset = 0
             while (offset < length) {
                 val chunk = minOf(256, length - offset)
-                val read = port.read(data, offset, chunk, Constants.STAGE2_TIMEOUT_MS.toInt())
+                val read = port.read(data.copyOfRange(offset, offset + chunk), Constants.STAGE2_TIMEOUT_MS.toInt())
                 offset += read
             }
             
@@ -572,10 +572,10 @@ object MtkProtocol {
                 putLong(start)
                 putInt(data.size)
             }
-            port.write(cmd.array(), 0, 16)
+            port.write(cmd.array(), 16)
             Thread.sleep(100)
             
-            port.write(data, 0, data.size)
+            port.write(data, data.size)
             Thread.sleep(200)
             
             Result.success(Unit)
@@ -618,7 +618,7 @@ object MtkProtocol {
                 putInt(0xC0) // CMD_INIT_NAND
                 putInt(0)
             }
-            port.write(cmd.array(), 0, 8)
+            port.write(cmd.array(), 8)
             Thread.sleep(200)
             
             Result.success(Unit)
@@ -637,7 +637,7 @@ object MtkProtocol {
                 putInt(0xC1) // CMD_INIT_EMMC
                 putInt(0)
             }
-            port.write(cmd.array(), 0, 8)
+            port.write(cmd.array(), 8)
             Thread.sleep(200)
             
             Result.success(Unit)
@@ -661,7 +661,7 @@ object MtkProtocol {
                 putLong(start)
                 putInt(length)
             }
-            port.write(cmd.array(), 0, 16)
+            port.write(cmd.array(), 16)
             Thread.sleep(200)
             
             val data = ByteArray(length)
@@ -684,7 +684,7 @@ object MtkProtocol {
                 putLong(start)
                 putInt(length)
             }
-            port.write(cmd.array(), 0, 16)
+            port.write(cmd.array(), 16)
             Thread.sleep(200)
             
             val data = ByteArray(length)
@@ -711,12 +711,12 @@ object MtkProtocol {
                 putInt(data.size)
                 putInt(otp?.size ?: 0)
             }
-            port.write(cmd.array(), 0, 12)
+            port.write(cmd.array(), 12)
             Thread.sleep(50)
             
-            port.write(data, 0, data.size)
+            port.write(data, data.size)
             otp?.let {
-                port.write(it, 0, it.size)
+                port.write(it, it.size)
             }
             Thread.sleep(200)
             
